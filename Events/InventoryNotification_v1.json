@@ -1,0 +1,8 @@
+[
+  {
+    "EventBusName": "Inventory",
+    "Source": "com.aws.inventory",
+    "Detail": "{ \"category\": \"lab-supplies\", \"value\": 123, \"location\": \"eu-west\" }",
+    "DetailType": "Order Notification"
+  }
+]

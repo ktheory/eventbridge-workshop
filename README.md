@@ -4,6 +4,12 @@ Based on [this AWS workshop](https://catalog.us-east-1.prod.workshops.aws/worksh
 
 CloudFormation template source:
 
-```
 https://aws-event-driven-architecture-workshop-assets.s3.amazonaws.com/master-v2.yaml
+
+```bash
+# Deploy
+aws cloudformation deploy \
+  --template-file ./master-v2.yaml \
+  --stack-name aws-event-driven-architectures-workshop \
+  --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
 ```
