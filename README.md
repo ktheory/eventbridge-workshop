@@ -9,7 +9,17 @@ https://aws-event-driven-architecture-workshop-assets.s3.amazonaws.com/master-v2
 ```bash
 # Deploy
 aws cloudformation deploy \
-  --template-file ./master-v2.yaml \
-  --stack-name aws-event-driven-architectures-workshop \
-  --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+  --template-file ./aaron.yaml \
+  --stack-name aaron-eventbus-demo \
+  --capabilities CAPABILITY_IAM
+```
+
+```
+# Generate Events
+aws events put-events --entries=Source=aaron-cli,DetailType=aaron.test,Detail='{"sequence": 123}',EventBusName=AaronDemoBus,TraceHeader=`uuidgen`
+```
+
+```
+# Consume events
+
 ```

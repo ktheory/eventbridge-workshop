@@ -1,0 +1,79 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Aaron's EventBridge Demo
+
+Resources:
+
+  EventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: "AaronDemoBus"
+
+  Archive:
+    Type: AWS::Events::Archive
+    Properties:
+      RetentionDays: 3
+      SourceArn: !GetAtt EventBus.Arn
+
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: DemoQueue
+
+  Topic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: Demo
+      Subscription:
+        - Endpoint: !GetAtt Queue.Arn
+          Protocol: sqs
+
+  QueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref Queue
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action:
+              - 'sqs:SendMessage'
+            Resource: !GetAtt Queue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref Topic
+
+  # Define the event rule to filter for events
+  EventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "EventRule"
+      EventBusName: !Ref EventBus
+      EventPattern:
+        source:
+          - aaron.cli
+      Targets:
+        - Arn: !Ref Topic
+          Id: "SNStopic"
+
+  # Allow EventBridge to invoke SNS
+  EventBridgeToToSnsPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: events.amazonaws.com
+          Action: sns:Publish
+          Resource: !Ref Topic
+      Topics:
+        - !Ref Topic
+
+Outputs:
+  BusArn:
+    Description: Event Bus Arn
+    Value: !GetAtt EventBus.Arn
