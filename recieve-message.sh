@@ -9,6 +9,7 @@ handle=$(cat /tmp/message.json | jq -r '.Messages[0].ReceiptHandle')
 
 aws sqs delete-message --queue-url $URL --receipt-handle $handle
 
-cat /tmp/message.json | jq -r '.Messages[0].Body | fromjson | .Message | fromjson'
+# cat /tmp/message.json | jq -r '.Messages[0].Body | fromjson | .Message | fromjson'
+cat /tmp/message.json | jq -r
 
 rm /tmp/message.json
